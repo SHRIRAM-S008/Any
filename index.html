@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data Filter</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- PapaParse for parsing CSV from Google Sheets -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <h1>Admission Dashboard</h1>
+            <p>Filter, search, and analyze admission and student performance data.</p>
+        </header>
+
+        <section class="controls">
+            <div class="search-bar">
+                <input type="text" id="searchInput"
+                    placeholder="Search by Date, Name, Email, Meritto ID, Course, Score...">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="dateFilter">Date Filter (Daywise)</label>
+                    <input type="date" id="dateFilter">
+                </div>
+                <div class="filter-group">
+                    <label for="courseFilter">Course Filter</label>
+                    <select id="courseFilter">
+                        <option value="">All Courses</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button id="resetBtn" class="btn-secondary">Reset Filters</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="data-table-container">
+            <div id="loading" class="loading">Loading data from Google Sheets...</div>
+            <table class="data-table" id="dataTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th data-sort="Date">Date</th>
+                        <th data-sort="Name">Name</th>
+                        <th data-sort="Email">Email</th>
+                        <th data-sort="Meritto ID">Meritto ID</th>
+                        <th data-sort="Course">Course</th>
+                        <th data-sort="Score" class="numeric">Score</th>
+                        <th data-sort="Max Score" class="numeric">Max Score</th>
+                        <th data-sort="Percentage" class="numeric">Percentage %</th>
+                        <th data-sort="Correct" class="numeric">Correct</th>
+                        <th data-sort="Incorrect" class="numeric">Incorrect</th>
+                        <th data-sort="Analytical Score" class="numeric">Analytical</th>
+                        <th data-sort="Programming Score" class="numeric">Programming</th>
+                        <th data-sort="Communication Score" class="numeric">Communication</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Rows injected by JS -->
+                </tbody>
+            </table>
+            <div id="noResults" class="no-results" style="display: none;">
+                <p>No student records matched your filters.</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
