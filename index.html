@@ -4,75 +4,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Data Filter</title>
+    <title>Admission Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts for typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- PapaParse for parsing CSV from Google Sheets -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 
 <body>
     <div class="dashboard">
+
+        <!-- Header -->
         <header class="header">
-            <h1>Admission Dashboard</h1>
-            <p>Filter, search, and analyze admission and student performance data.</p>
+            <div class="header-left">
+                <h1>Admission Dashboard</h1>
+                <p>Filter, search, and analyze student performance data in real-time.</p>
+            </div>
+            <div class="header-actions">
+                <a href="report.html" class="btn-primary" style="text-decoration:none;">Date Wise Analysis →</a>
+            </div>
+            <div class="header-stats" style="flex-basis: 100%;">
+                <div class="stat-pill">
+                    <span class="dot"></span>
+                    <span>Total Records:</span>
+                    <span class="count" id="totalCount">—</span>
+                </div>
+                <div class="stat-pill">
+                    <span>Showing:</span>
+                    <span class="count" id="shownCount">—</span>
+                </div>
+            </div>
         </header>
 
+        <!-- Controls -->
         <section class="controls">
+            <!-- Search -->
             <div class="search-bar">
-                <input type="text" id="searchInput"
-                    placeholder="Search by Date, Name, Email, Meritto ID, Course, Score...">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" class="search-icon">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
+                <input type="text" id="searchInput" placeholder="Search by Name, Email, ID, Course…" autocomplete="off">
             </div>
 
             <div class="filters">
+                <!-- Date Filter -->
                 <div class="filter-group">
-                    <label for="dateFilter">Date Filter (Daywise)</label>
+                    <label for="dateFilter">Date</label>
                     <input type="date" id="dateFilter">
                 </div>
+
+                <!-- Course Filter -->
                 <div class="filter-group">
-                    <label for="courseFilter">Course Filter</label>
+                    <label for="courseFilter">Course</label>
                     <select id="courseFilter">
                         <option value="">All Courses</option>
                     </select>
                 </div>
+
+                <!-- Score Range Slider -->
+                <div class="slider-group">
+                    <label>
+                        Score Range
+                        <span class="slider-vals">
+                            <span id="scoreMinDisplay">0</span> — <span id="scoreMaxDisplay">100</span>
+                        </span>
+                    </label>
+                    <div class="range-slider-wrap">
+                        <div class="range-track">
+                            <div class="range-fill" id="scoreFill"></div>
+                        </div>
+                        <input type="range" id="scoreMinSlider" class="range-input thumb-left" min="0" max="100"
+                            value="0" step="1">
+                        <input type="range" id="scoreMaxSlider" class="range-input thumb-right" min="0" max="100"
+                            value="100" step="1">
+                    </div>
+                </div>
+
+                <!-- Percentage Slider -->
+                <div class="slider-group">
+                    <label>
+                        Percentage %
+                        <span class="slider-vals">
+                            <span id="pctMinDisplay">0</span>% — <span id="pctMaxDisplay">100</span>%
+                        </span>
+                    </label>
+                    <div class="range-slider-wrap">
+                        <div class="range-track">
+                            <div class="range-fill" id="pctFill"></div>
+                        </div>
+                        <input type="range" id="pctMinSlider" class="range-input thumb-left" min="0" max="100" value="0"
+                            step="1">
+                        <input type="range" id="pctMaxSlider" class="range-input thumb-right" min="0" max="100"
+                            value="100" step="1">
+                    </div>
+                </div>
+
+                <!-- Reset -->
                 <div class="filter-group">
-                    <button id="resetBtn" class="btn-secondary">Reset Filters</button>
+                    <button id="resetBtn" class="btn-reset">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="1 4 1 10 7 10" />
+                            <path d="M3.51 15a9 9 0 1 0 .49-4.49" />
+                        </svg>
+                        Reset
+                    </button>
                 </div>
             </div>
         </section>
 
-        <section class="data-table-container">
-            <div id="loading" class="loading">Loading data from Google Sheets...</div>
-            <table class="data-table" id="dataTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th data-sort="Date">Date</th>
-                        <th data-sort="Name">Name</th>
-                        <th data-sort="Email">Email</th>
-                        <th data-sort="Meritto ID">Meritto ID</th>
-                        <th data-sort="Course">Course</th>
-                        <th data-sort="Score" class="numeric">Score</th>
-                        <th data-sort="Max Score" class="numeric">Max Score</th>
-                        <th data-sort="Percentage" class="numeric">Percentage %</th>
-                        <th data-sort="Correct" class="numeric">Correct</th>
-                        <th data-sort="Incorrect" class="numeric">Incorrect</th>
-                        <th data-sort="Analytical Score" class="numeric">Analytical</th>
-                        <th data-sort="Programming Score" class="numeric">Programming</th>
-                        <th data-sort="Communication Score" class="numeric">Communication</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Rows injected by JS -->
-                </tbody>
-            </table>
-            <div id="noResults" class="no-results" style="display: none;">
-                <p>No student records matched your filters.</p>
+        <!-- Active filter chips -->
+        <div class="active-filters" id="activeFilters"></div>
+
+        <!-- Table Card -->
+        <section class="table-wrapper">
+            <!-- Toolbar -->
+            <div class="table-toolbar">
+                <div class="table-toolbar-left">
+                    <div class="result-count" id="resultCount">Loading…</div>
+                    <div class="sort-indicator-legend" id="sortLegend" style="display:none;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="5 8 12 3 19 8" />
+                            <line x1="12" y1="3" x2="12" y2="21" />
+                        </svg>
+                        Sorted by <strong id="sortLegendText"></strong>
+                    </div>
+                </div>
+
+                <!-- Quick Sort Buttons -->
+                <div class="quick-sort-bar">
+                    <span class="quick-sort-label">Quick sort:</span>
+                    <button class="btn-quick-sort" id="qs-date" data-sort="Date">
+                        Date <span class="qs-arrow">↕</span>
+                    </button>
+                    <button class="btn-quick-sort" id="qs-score" data-sort="Score">
+                        Score <span class="qs-arrow">↕</span>
+                    </button>
+                    <button class="btn-quick-sort" id="qs-pct" data-sort="Percentage">
+                        % <span class="qs-arrow">↕</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Skeleton Loader -->
+            <div id="loadingState" class="loading-state">
+                <div class="skeleton-row">
+                    <div class="skeleton-cell" style="width:90px;"></div>
+                    <div class="skeleton-cell" style="width:140px;"></div>
+                    <div class="skeleton-cell" style="width:200px;"></div>
+                    <div class="skeleton-cell" style="width:100px;"></div>
+                    <div class="skeleton-cell" style="width:120px;"></div>
+                    <div class="skeleton-cell" style="width:60px;"></div>
+                    <div class="skeleton-cell" style="width:60px;"></div>
+                    <div class="skeleton-cell" style="width:80px;"></div>
+                </div>
+                <div class="skeleton-row" style="opacity:0.7">
+                    <div class="skeleton-cell" style="width:90px;"></div>
+                    <div class="skeleton-cell" style="width:160px;"></div>
+                    <div class="skeleton-cell" style="width:190px;"></div>
+                    <div class="skeleton-cell" style="width:110px;"></div>
+                    <div class="skeleton-cell" style="width:100px;"></div>
+                    <div class="skeleton-cell" style="width:60px;"></div>
+                    <div class="skeleton-cell" style="width:60px;"></div>
+                    <div class="skeleton-cell" style="width:80px;"></div>
+                </div>
+                <div class="skeleton-row" style="opacity:0.45">
+                    <div class="skeleton-cell" style="width:90px;"></div>
+                    <div class="skeleton-cell" style="width:130px;"></div>
+                    <div class="skeleton-cell" style="width:210px;"></div>
+                    <div class="skeleton-cell" style="width:95px;"></div>
+                    <div class="skeleton-cell" style="width:115px;"></div>
+                    <div class="skeleton-cell" style="width:60px;"></div>
+                    <div class="skeleton-cell" style="width:60px;"></div>
+                    <div class="skeleton-cell" style="width:80px;"></div>
+                </div>
+            </div>
+
+            <!-- Table Scroll Wrapper -->
+            <div class="table-scroll" id="tableScrollWrapper" style="display:none;">
+                <table class="data-table" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="Date">
+                                <div class="th-inner">Date<span class="sort-icon"><span class="arrow-up"></span><span
+                                            class="arrow-down"></span></span></div>
+                            </th>
+                            <th class="sortable" data-sort="Name">
+                                <div class="th-inner">Name<span class="sort-icon"><span class="arrow-up"></span><span
+                                            class="arrow-down"></span></span></div>
+                            </th>
+                            <th data-sort="Email">Email</th>
+                            <th data-sort="Meritto ID">Meritto ID</th>
+                            <th class="sortable" data-sort="Course">
+                                <div class="th-inner">Course<span class="sort-icon"><span class="arrow-up"></span><span
+                                            class="arrow-down"></span></span></div>
+                            </th>
+                            <th class="sortable numeric" data-sort="Score">
+                                <div class="th-inner" style="justify-content:flex-end;">Score<span
+                                        class="sort-icon"><span class="arrow-up"></span><span
+                                            class="arrow-down"></span></span></div>
+                            </th>
+                            <th class="numeric" data-sort="Max Score">Max</th>
+                            <th class="sortable numeric" data-sort="Percentage">
+                                <div class="th-inner" style="justify-content:flex-end;">Pct %<span
+                                        class="sort-icon"><span class="arrow-up"></span><span
+                                            class="arrow-down"></span></span></div>
+                            </th>
+                            <th class="numeric" data-sort="Correct"><svg width="14" height="14" viewBox="0 0 24 24"
+                                    fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg></th>
+                            <th class="numeric" data-sort="Incorrect"><svg width="14" height="14" viewBox="0 0 24 24"
+                                    fill="none" stroke="#f43f5e" stroke-width="3" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg></th>
+                            <th class="numeric" data-sort="Analytical Score">Analytical</th>
+                            <th class="numeric" data-sort="Programming Score">Prog.</th>
+                            <th class="numeric" data-sort="Communication Score">Comm.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- No Results -->
+            <div id="noResults" class="no-results" style="display:none;">
+                <div class="no-results-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+                <h3>No records found</h3>
+                <p>Try adjusting your search or filter criteria.</p>
             </div>
         </section>
     </div>
