@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admission Dashboard</title>
+    <title>CBO dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -16,11 +16,8 @@
         <!-- Header -->
         <header class="header">
             <div class="header-left">
-                <h1>Admission Dashboard</h1>
+                <h1>CBO dashboard</h1>
                 <p>Filter, search, and analyze student performance data in real-time.</p>
-            </div>
-            <div class="header-actions">
-                <a href="report.html" class="btn-primary" style="text-decoration:none;">Date Wise Analysis →</a>
             </div>
             <div class="header-stats" style="flex-basis: 100%;">
                 <div class="stat-pill">
@@ -111,6 +108,8 @@
                         Reset
                     </button>
                 </div>
+
+
             </div>
         </section>
 
@@ -134,17 +133,23 @@
                 </div>
 
                 <!-- Quick Sort Buttons -->
-                <div class="quick-sort-bar">
-                    <span class="quick-sort-label">Quick sort:</span>
-                    <button class="btn-quick-sort" id="qs-date" data-sort="Date">
-                        Date <span class="qs-arrow">↕</span>
-                    </button>
-                    <button class="btn-quick-sort" id="qs-score" data-sort="Score">
-                        Score <span class="qs-arrow">↕</span>
-                    </button>
-                    <button class="btn-quick-sort" id="qs-pct" data-sort="Percentage">
-                        % <span class="qs-arrow">↕</span>
-                    </button>
+                <div class="table-toolbar-right"
+                    style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <div class="quick-sort-bar">
+                        <span class="quick-sort-label">Quick sort:</span>
+                        <button class="btn-quick-sort" id="qs-date" data-sort="Date">
+                            Date <span class="qs-arrow">↕</span>
+                        </button>
+                        <button class="btn-quick-sort" id="qs-score" data-sort="Score">
+                            Score <span class="qs-arrow">↕</span>
+                        </button>
+                        <button class="btn-quick-sort" id="qs-pct" data-sort="Percentage">
+                            % <span class="qs-arrow">↕</span>
+                        </button>
+                    </div>
+                    <a href="report.html" class="btn-primary"
+                        style="text-decoration:none; padding: 0.4rem 1rem; font-size: 0.8rem; border-radius: 9999px;">Date
+                        Wise Analysis →</a>
                 </div>
             </div>
 
