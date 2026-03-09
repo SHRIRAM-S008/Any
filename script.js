@@ -116,15 +116,27 @@ async function init() {
                 }
             }
 
+            const scoreVal = parseFloat(row['Score'] || row['score']);
+            const maxScoreVal = parseFloat(row['Max Score'] || row['maxScore']);
+
+            let percentageVal = null;
+            if (!isNaN(scoreVal)) {
+                if (!isNaN(maxScoreVal) && maxScoreVal > 0) {
+                    percentageVal = (scoreVal / maxScoreVal) * 100;
+                } else {
+                    percentageVal = (scoreVal / 40) * 100; // default max score to 40
+                }
+            }
+
             return {
                 Date: parsedDate,
                 Name: row['Name'] || row['name'] || '-',
                 Email: row['Email'] || row['email'] || '-',
                 'Meritto ID': row['Meritto ID'] || row['Phone'] || '-',
                 Course: row['Course'] || row['course'] || '-',
-                Score: parseFloat(row['Score'] || row['score']) || null,
-                'Max Score': parseFloat(row['Max Score'] || row['maxScore']) || null,
-                Percentage: parseFloat(row['Percentage'] || row['percentage']) || null,
+                Score: isNaN(scoreVal) ? null : scoreVal,
+                'Max Score': isNaN(maxScoreVal) ? null : maxScoreVal,
+                Percentage: percentageVal,
                 Correct: parseInt(row['Correct'] || row['correctCount']) || 0,
                 Incorrect: parseInt(row['Incorrect'] || row['incorrectCount']) || 0,
                 'Analytical Score': parseFloat(row['Analytical'] || row['Analytical Score'] || row['analytical']) || null,
@@ -511,6 +523,4 @@ function resetFilters() {
     updateSortUI();
     applyFilters();
 }
-
-// ── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', init);
